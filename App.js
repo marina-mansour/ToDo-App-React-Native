@@ -1,95 +1,69 @@
-import { StatusBar } from "expo-status-bar";
-import {
-  StyleSheet,
-  Text,
-  TextInput,
-  TouchableOpacity,
-  View,
-  FlatList,
-} from "react-native";
+// import { StatusBar } from "expo-status-bar";
 import "@expo/metro-runtime";
-import { styles } from "./styles";
+
+import { NavigationContainer } from "@react-navigation/native";
+import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
+
+import StackRoute from "./src/shared/StackRoute";
+import CompletedTasks from "./src/pages/CompletedTasks";
+
+import Ionicons from "react-native-vector-icons/Ionicons";
 import { useState } from "react";
-// import { FlatList } from "react-native-web";
 
-const DATA = [
-  { id: 1, title: "title 1", description: "description 1" },
-  { id: 2, title: "title 2", description: "description 2" },
-  { id: 3, title: "title 3", description: "description 3" },
-  { id: 4, title: "title 4", description: "description 4" },
-];
-
-const Item = ({ title, description }) => (
-  <View>
-    <Text>{title}</Text>
-    <Text>{description}</Text>
-  </View>
-);
+const { Navigator, Screen } = createBottomTabNavigator();
 
 export default function App() {
-  const [activeButton, setActiveButton] = useState(1);
-
-  const buttons = [
-    { id: 1, title: "All" },
-    { id: 2, title: "Active" },
-    { id: 3, title: "Done" },
-  ];
-
-  const handlePress = (id) => {
-    setActiveButton(id);
-  };
+  const [todos, setTodos] = useState([
+    {
+      id: 1,
+      title: "title 1",
+      description: "description 1",
+      isCompleted: false,
+    },
+  ]);
   return (
-    <View style={styles.container}>
-      {/* //app bar */}
-      <View style={styles.titleBg}>
-        <Text style={styles.title}>ToDo App</Text>
-      </View>
-      {/* //body */}
-      <View style={styles.body}>
-        {/* inputs */}
-        <TextInput style={styles.input} placeholder="Title ..." />
-        <TextInput style={styles.input} placeholder="Description ..." />
-        {/* buttons */}
-        <TouchableOpacity style={styles.submitBtn}>
-          <Text style={styles.buttonText}>Add</Text>
-        </TouchableOpacity>
-        {/* divider line */}
-        <View style={styles.divider}></View>
-        {/* filter buttons container */}
-        <View style={styles.filterContainer}>
-          {buttons.map((btn) => (
-            <TouchableOpacity
-              key={btn.id}
-              style={
-                btn.id === activeButton
-                  ? styles.activeFilterBtn
-                  : styles.filterBtn
+    <>
+      <NavigationContainer>
+        <Navigator
+          screenOptions={({ route }) => ({
+            tabBarIcon: ({ focused, color, size }) => {
+              let iconName;
+              if (route.name === "Main") {
+                iconName = focused ? "home" : "home-outline";
+              } else if (route.name === "completed-tasks") {
+                iconName = focused
+                  ? "checkmark-circle"
+                  : "checkmark-circle-outline";
               }
-              onPress={() => handlePress(btn.id)}
-            >
-              <Text
-                style={
-                  btn.id === activeButton
-                    ? styles.activeFilterText
-                    : styles.filterText
-                }
-              >
-                {btn.title}
-              </Text>
-            </TouchableOpacity>
-          ))}
-        </View>
-        {/* data from list */}
-        <FlatList
-          style={styles.todosContainer}
-          data={DATA}
-          renderItem={({ item }) => (
-            <Item title={item.title} description={item.description} />
-          )}
-          keyExtractor={(item) => item.id}
-        />
-      </View>
-      {/* <StatusBar style="auto" /> */}
-    </View>
+              return <Ionicons name={iconName} size={size} color={color} />;
+            },
+            tabBarStyle: {
+              position: "absolute",
+              width: "90%",
+              bottom: 20,
+              left: "5%",
+              borderRadius: 20,
+              shadowColor: "gray",
+            },
+            tabBarActiveTintColor: "black",
+            tabBarInactiveTintColor: "gray",
+          })}
+        >
+          <Screen
+            name="Main"
+            component={() => <StackRoute todos={todos} setTodos={setTodos} />}
+            // initialParams={{ todos, setTodos }}
+            options={{ title: "Home", headerShown: false }}
+          />
+          <Screen
+            name="completed-tasks"
+            component={() => (
+              <CompletedTasks todos={todos} setTodos={setTodos} />
+            )}
+            options={{ title: "Completed Tasks" }}
+          />
+        </Navigator>
+      </NavigationContainer>
+    </>
   );
 }
