@@ -5,20 +5,16 @@ import {
   TextInput,
   TouchableOpacity,
   View,
+  ImageBackground,
 } from "react-native";
 import { SafeAreaView } from "react-native-safe-area-context";
 import { styles } from "../shared/styles";
 import Todos from "../components/Todos";
 
 const Home = ({ todos, setTodos }) => {
-  // const [todos, setTodos] = useState([
-  //   {
-  //     id: 1,
-  //     title: "title 1",
-  //     description: "description 1",
-  //     isCompleted: false,
-  //   },
-  // ]);
+  const image = {
+    uri: "https://www.vectorstock.com/royalty-free-vector/grey-abstract-background-vector-2113540",
+  };
 
   const [activeButton, setActiveButton] = useState(1);
 
@@ -49,82 +45,90 @@ const Home = ({ todos, setTodos }) => {
     }
   };
 
-  useEffect(() => {
-    // console.log(todos);
-  }, []);
+  useEffect(() => {}, []);
   useEffect(() => {
     console.log(todos);
   }, [todos]);
 
   return (
-    <SafeAreaView style={styles.container}>
-      {/* title */}
-      <Text
-        style={{ fontSize: 25, textTransform: "uppercase", fontWeight: "bold" }}
-      >
-        todo app
-      </Text>
-      {/* inputs */}
-      <TextInput
-        style={styles.input}
-        value={title}
-        placeholder="Title ..."
-        onChangeText={(text) => setTitle(text)}
-      />
-      <TextInput
-        style={styles.input}
-        value={description}
-        placeholder="Description ..."
-        onChangeText={(text) => setDescription(text)}
-      />
-      {/* buttons */}
-      <TouchableOpacity
-        style={styles.submitBtn}
-        activeOpacity={0.5}
-        onPress={addTodo}
-      >
-        <Text style={styles.text}>Add</Text>
-      </TouchableOpacity>
-      {/* divider line */}
-      <View style={styles.dividerLine}></View>
-      {/* divider line */}
-      <View style={styles.divider}></View>
-      {/* filter buttons container */}
-      <View style={styles.filterContainer}>
-        {buttons.map((btn) => (
-          <TouchableOpacity
-            key={btn.id}
-            activeOpacity={0.5}
-            style={
-              btn.id === activeButton
-                ? styles.activeFilterBtn
-                : styles.filterBtn
-            }
-            onPress={() => handlePress(btn.id)}
-          >
-            <Text
+    <ImageBackground
+      // source={require("../../assets/images/bg1.jpg")}
+      source={image}
+      style={styles.backgroundImage}
+    >
+      <SafeAreaView style={styles.container}>
+        {/* title */}
+        <Text
+          style={{
+            fontSize: 25,
+            textTransform: "uppercase",
+            fontWeight: "bold",
+          }}
+        >
+          todo app
+        </Text>
+        {/* inputs */}
+        <TextInput
+          style={styles.input}
+          value={title}
+          placeholder="Title ..."
+          onChangeText={(text) => setTitle(text)}
+        />
+        <TextInput
+          style={styles.input}
+          value={description}
+          placeholder="Description ..."
+          onChangeText={(text) => setDescription(text)}
+        />
+        {/* buttons */}
+        <TouchableOpacity
+          style={styles.submitBtn}
+          activeOpacity={0.5}
+          onPress={addTodo}
+        >
+          <Text style={styles.text}>Add</Text>
+        </TouchableOpacity>
+        {/* divider line */}
+        <View style={styles.dividerLine}></View>
+        {/* divider line */}
+        <View style={styles.divider}></View>
+        {/* filter buttons container */}
+        <View style={styles.filterContainer}>
+          {buttons.map((btn) => (
+            <TouchableOpacity
+              key={btn.id}
+              activeOpacity={0.5}
               style={
                 btn.id === activeButton
-                  ? styles.activeFilterText
-                  : styles.filterText
+                  ? styles.activeFilterBtn
+                  : styles.filterBtn
               }
+              onPress={() => handlePress(btn.id)}
             >
-              {btn.title}
-            </Text>
-          </TouchableOpacity>
-        ))}
-      </View>
-      {/* todos Container */}
-      {todos.length == 0 ? (
-        <View style={{ ...styles.container, marginTop: 40 }}>
-          <Text>No Todos to Show</Text>
+              <Text
+                style={
+                  btn.id === activeButton
+                    ? styles.activeFilterText
+                    : styles.filterText
+                }
+              >
+                {btn.title}
+              </Text>
+            </TouchableOpacity>
+          ))}
         </View>
-      ) : (
-        <ScrollView style={styles.todosContainer}>
-          <Todos todos={todos} setTodos={setTodos} />
-        </ScrollView>
-      )}
-    </SafeAreaView>
+        {/* todos Container */}
+        {todos.length == 0 ? (
+          <View style={{ ...styles.container, marginTop: 40 }}>
+            <Text>No Todos to Show</Text>
+          </View>
+        ) : (
+          <ScrollView style={styles.todosContainer}>
+            <Todos todos={todos} setTodos={setTodos} />
+          </ScrollView>
+        )}
+      </SafeAreaView>
+    </ImageBackground>
   );
 };
 

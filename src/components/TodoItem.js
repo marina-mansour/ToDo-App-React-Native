@@ -1,11 +1,24 @@
 import { useNavigation } from "@react-navigation/native";
-import React, { useEffect } from "react";
-import { FlatList, Text, TouchableOpacity, View } from "react-native";
+import React, { useEffect, useState } from "react";
+import {
+  Button,
+  FlatList,
+  Modal,
+  Text,
+  TouchableOpacity,
+  View,
+} from "react-native";
 
 import Icon from "react-native-vector-icons/MaterialIcons";
 import { styles } from "../shared/styles";
 
 const TodoItem = ({ todos, setTodos }) => {
+  // **State for managing modal visibility**
+  const [modalVisible, setModalVisible] = useState(false);
+
+  // **State for storing the ID of the todo to be deleted**
+  const [selectedTodoId, setSelectedTodoId] = useState(null);
+
   const unfinished = todos.filter((todo) => todo.isCompleted === false);
   const navigation = useNavigation();
   const Item = ({ title, description, id, onDelete, onDone }) => (
@@ -48,10 +61,18 @@ const TodoItem = ({ todos, setTodos }) => {
     </View>
   );
 
+  // **Handler to open the delete confirmation modal**
   const handleDelete = (id) => {
-    setTodos((prevTodos) => prevTodos.filter((todo) => todo.id !== id));
-    // console.log("delete");
-    console.log(`delete ${id}`);
+    setSelectedTodoId(id);
+    setModalVisible(true);
+  };
+
+  // **Handler to confirm deletion**
+  const confirmDelete = () => {
+    setTodos((prevTodos) =>
+      prevTodos.filter((todo) => todo.id !== selectedTodoId)
+    );
+    setModalVisible(false);
   };
 
   const handleDone = (id) => {
@@ -60,14 +81,40 @@ const TodoItem = ({ todos, setTodos }) => {
         todo.id === id ? { ...todo, isCompleted: true } : todo
       )
     );
-    // console.log("Done");
-    console.log(`done ${id}`);
   };
-
-  // useEffect(() => {}, [todos]);
 
   return (
     <>
+      {/* **Modal for confirming deletion** */}
+      <Modal
+        animationType="slide"
+        transparent={true}
+        visible={modalVisible}
+        onRequestClose={() => setModalVisible(false)}
+      >
+        <View style={styles.modalOverlay}>
+          <View style={styles.modalContainer}>
+            <Text style={styles.modalText}>
+              Are you sure you want to delete this ToDo?
+            </Text>
+            <View style={styles.modalButtonContainer}>
+              <TouchableOpacity
+                style={styles.filterBtn}
+                onPress={() => setModalVisible(false)}
+              >
+                <Text>Cancel</Text>
+              </TouchableOpacity>
+              <TouchableOpacity
+                style={styles.activeFilterBtn}
+                onPress={confirmDelete}
+              >
+                <Text style={styles.activeFilterText}>Delete</Text>
+              </TouchableOpacity>
+            </View>
+          </View>
+        </View>
+      </Modal>
+
       <FlatList
         data={unfinished}
         renderItem={({ item }) => (

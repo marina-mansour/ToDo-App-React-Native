@@ -13,14 +13,7 @@ import { useState } from "react";
 const { Navigator, Screen } = createBottomTabNavigator();
 
 export default function App() {
-  const [todos, setTodos] = useState([
-    {
-      id: 1,
-      title: "title 1",
-      description: "description 1",
-      isCompleted: false,
-    },
-  ]);
+  const [todos, setTodos] = useState([]);
   return (
     <>
       <NavigationContainer>
